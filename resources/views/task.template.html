@@ -1,0 +1,11 @@
+<div class="form_item_block">
+  <label>Image:<span class="asterisk">*</span></label>
+  <select ng-model="image" ng-required="true" >
+    <option value="bash">maven 3</option>
+    <option value="zsh">nodejs 6</option>
+  </select>
+  <label>Build script:<span class="asterisk">*</span></label>
+  <textarea ng-model="script" ng-required="true" rows="2" cols="60"></textarea>
+  <span class="form_error" ng-show="GOINPUTNAME[script].$error.server">{{ GOINPUTNAME[script].$error.server }}</span>
+  <span class="form_error" ng-show="GOINPUTNAME[shtype].$error.server">{{ GOINPUTNAME[shtype].$error.server }}</span>
+</div>
