@@ -54,11 +54,11 @@ public class GoPluginImpl implements GoPlugin {
 
     private static Logger LOGGER = Logger.getLoggerFor(GoPluginImpl.class);
     private Map<String, String> dockerImageMap = ImmutableMap.of(
-            "maven 3", "registry.cn-hangzhou.aliyuncs.com/leansw/maven:3.3-jdk-8",
-            "nodejs 6", "registry.cn-hangzhou.aliyuncs.com/leansw/node:6.7.0");
+            "maven3", "registry.cn-hangzhou.aliyuncs.com/leansw/maven:3.3-jdk-8",
+            "node6", "registry.cn-hangzhou.aliyuncs.com/leansw/node:6.7.0");
     private Map<String, String> extraParametersMap = ImmutableMap.of(
-            "maven 3", "-v /root/.m2:/root/.m2",
-            "nodejs 6", "");
+            "maven3", "-v /root/.m2:/root/.m2",
+            "node6", "");
 
     @Override
     public void initializeGoApplicationAccessor(GoApplicationAccessor goApplicationAccessor) {
@@ -91,7 +91,7 @@ public class GoPluginImpl implements GoPlugin {
 
     private GoPluginApiResponse handleConfiguration() {
         Map<String, Object> response = new HashMap<String, Object>();
-        response.put("image", createField("Image", "maven 3", true, false, "1"));
+        response.put("image", createField("Image", "maven3", true, false, "1"));
         response.put("script", createField("Build Script", null, true, false, "0"));
         return renderJSON(SUCCESS_RESPONSE_CODE, response);
     }
