@@ -17,6 +17,7 @@
 package com.tw.go.plugin.task;
 
 import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.Lists;
 import com.google.gson.GsonBuilder;
 import com.thoughtworks.go.plugin.api.GoApplicationAccessor;
 import com.thoughtworks.go.plugin.api.GoPlugin;
@@ -51,8 +52,10 @@ public class GoPluginImpl implements GoPlugin {
     public final static String REQUEST_EXECUTION = "execute";
 
     public static final int SUCCESS_RESPONSE_CODE = 200;
+    public static final String WORKDIR_PREFIX = "/run/go-agent/";
 
     private static Logger LOGGER = Logger.getLoggerFor(GoPluginImpl.class);
+
     private Map<String, String> dockerImageMap = ImmutableMap.of(
             "maven3", "registry.cn-hangzhou.aliyuncs.com/leansw/maven:3.3-jdk-8",
             "node6", "registry.cn-hangzhou.aliyuncs.com/leansw/node:6.7.0");
@@ -138,9 +141,9 @@ public class GoPluginImpl implements GoPlugin {
             JobConsoleLogger.getConsoleLogger().printLine("[docker-executor] Build Script: " + buildScript);
             JobConsoleLogger.getConsoleLogger().printLine("[docker-executor] -------------------------");
 
-            String dockerCmd = getDockerCmd(workingDirectory, buildImage, buildScript);
-            JobConsoleLogger.getConsoleLogger().printLine("[docker-executor] " + dockerCmd);
-            int exitCode = executeCommand(workingDirectory, environmentVariables, dockerCmd);
+            String dockerParam = getDockerParam(workingDirectory, buildImage);
+            JobConsoleLogger.getConsoleLogger().printLine("[docker-executor] " + dockerParam + "'" + buildScript + "'");
+            int exitCode = executeDockerCommand(workingDirectory, environmentVariables, dockerParam, buildScript);
 
             if (exitCode == 0) {
                 response.put("success", true);
@@ -156,15 +159,23 @@ public class GoPluginImpl implements GoPlugin {
         return renderJSON(SUCCESS_RESPONSE_CODE, response);
     }
 
-    protected String getDockerCmd(String workingDirectory, String buildImage, String buildScript) {
+    protected String getDockerParam(String workingDirectory, String buildImage) {
         String dockerImageName = dockerImageMap.get(buildImage);
         String extraParameters = extraParametersMap.get(buildImage);
-        String dockerCmd = "docker run --rm -v " + workingDirectory + ":/workspace -w /workspace " +
-                extraParameters + " " + dockerImageName + " sh -c '" + buildScript + "'";
+        String dockerCmd = "docker run --rm -v " + WORKDIR_PREFIX + workingDirectory + ":/workspace -w /workspace " +
+                extraParameters + " " + dockerImageName + " sh -c ";
         return dockerCmd;
     }
 
-    private int executeCommand(String workingDirectory, Map<String, String> environmentVariables, String... command) throws IOException, InterruptedException {
+    private int executeDockerCommand(String workingDirectory, Map<String, String> environmentVariables,
+                                     String dockerParam, String buildScript) throws IOException, InterruptedException {
+        List<String> parameters = Lists.newArrayList(dockerParam.split(" "));
+        parameters.add(buildScript);
+        return executeCommand(workingDirectory, environmentVariables, parameters.toArray(new String[parameters.size()]));
+    }
+
+    private int executeCommand(String workingDirectory, Map<String, String> environmentVariables, String... command)
+            throws IOException, InterruptedException {
         ProcessBuilder processBuilder = new ProcessBuilder(command);
         processBuilder.directory(new File(workingDirectory));
         if (environmentVariables != null && !environmentVariables.isEmpty()) {
