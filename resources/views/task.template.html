@@ -1,11 +1,18 @@
 <div class="form_item_block">
-  <label>Image:<span class="asterisk">*</span></label>
-  <select ng-model="image" ng-required="true" >
-    <option value="maven3">maven 3</option>
-    <option value="node6">nodejs 6</option>
-  </select>
-  <span class="form_error" ng-show="GOINPUTNAME[image].$error.server">{{ GOINPUTNAME[image].$error.server }}</span>
-  <label>Build script:<span class="asterisk">*</span></label>
-  <textarea ng-model="script" ng-required="true" rows="2" cols="60"></textarea>
-  <span class="form_error" ng-show="GOINPUTNAME[script].$error.server">{{ GOINPUTNAME[script].$error.server }}</span>
+
+    <label>Image:<span class="asterisk">*</span></label>
+    <input type="radio" name="imageSrc" ng-model="source" value="std" ng-checked="true">标准
+    <input type="radio" name="imageSrc" ng-model="source" value="diy">自定义
+    <br>
+    <select ng-model="stdImg" ng-required="false" ng-show="source != 'diy'" style="float: none;">
+        <option value="maven3">maven 3</option>
+        <option value="node6">nodejs 6</option>
+    </select>
+    <input type="text" ng-model="diyImg" ng-show="source == 'diy'" style="float: none;">
+    <span class="form_error" ng-show="GOINPUTNAME[stdImg].$error.server">{{ GOINPUTNAME[stdImg].$error.server }}</span>
+    <span class="form_error" ng-show="GOINPUTNAME[diyImg].$error.server">{{ GOINPUTNAME[diyImg].$error.server }}</span>
+
+    <label>Build script:<span class="asterisk">*</span></label>
+    <textarea ng-model="script" ng-required="true" rows="2" cols="60"></textarea>
+    <span class="form_error" ng-show="GOINPUTNAME[script].$error.server">{{ GOINPUTNAME[script].$error.server }}</span>
 </div>
