@@ -182,7 +182,7 @@ public class GoPluginImpl implements GoPlugin {
 
     private int executeDockerCommand(String workingDirectory, Map<String, String> environmentVariables,
                                      String dockerParam, String buildScript) throws IOException, InterruptedException {
-        List<String> parameters = Lists.newArrayList(dockerParam.split(" "));
+        List<String> parameters = Lists.newArrayList(dockerParam.split("[ ]+"));
         parameters.add(buildScript);
         return executeCommand(workingDirectory, environmentVariables, parameters.toArray(new String[parameters.size()]));
     }
