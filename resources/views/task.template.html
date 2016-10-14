@@ -1,6 +1,6 @@
 <div class="form_item_block">
 
-    <label>Image:<span class="asterisk">*</span></label>
+    <label>镜像:<span class="asterisk">*</span></label>
     <input type="radio" name="imageSrc" ng-model="source" value="std" ng-checked="true">标准
     <input type="radio" name="imageSrc" ng-model="source" value="diy">自定义
     <br>
@@ -12,7 +12,10 @@
     <span class="form_error" ng-show="GOINPUTNAME[stdImg].$error.server">{{ GOINPUTNAME[stdImg].$error.server }}</span>
     <span class="form_error" ng-show="GOINPUTNAME[diyImg].$error.server">{{ GOINPUTNAME[diyImg].$error.server }}</span>
 
-    <label>Build script:<span class="asterisk">*</span></label>
+    <label>执行命令:<span class="asterisk">*</span></label>
     <textarea ng-model="script" ng-required="true" rows="2" cols="60"></textarea>
     <span class="form_error" ng-show="GOINPUTNAME[script].$error.server">{{ GOINPUTNAME[script].$error.server }}</span>
+
+    <label>附加环境变量（变量名和值用等号连接，每行一个）:</label>
+    <textarea ng-model="envs" ng-required="false" rows="2" cols="60"></textarea>
 </div>
