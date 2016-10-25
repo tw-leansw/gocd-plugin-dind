@@ -16,6 +16,9 @@
     <textarea ng-model="script" ng-required="true" rows="2" cols="60"></textarea>
     <span class="form_error" ng-show="GOINPUTNAME[script].$error.server">{{ GOINPUTNAME[script].$error.server }}</span>
 
-    <label>附加环境变量（变量名和值用等号连接，每行一个）:</label>
-    <textarea ng-model="envs" ng-required="false" rows="2" cols="60"></textarea>
+    <label>附加环境变量（格式：『变量名=变量值』，每行一个）:</label>
+    <textarea ng-model="envs" ng-required="false" rows="1" cols="60"></textarea>
+
+    <label>附加域名映射（格式：『域名:IP地址』，每行一个）:</label>
+    <textarea ng-model="hostMap" ng-required="false" rows="1" cols="60"></textarea>
 </div>

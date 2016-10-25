@@ -99,6 +99,7 @@ public class GoPluginImpl implements GoPlugin {
         response.put("diyImg", createField("UserImage", "", false, false, "2"));
         response.put("script", createField("BuildScript", "", true, false, "3"));
         response.put("envs", createField("Environments", "", false, false, "4"));
+        response.put("hostMap", createField("HostMap", "", false, false, "5"));
         return renderJSON(SUCCESS_RESPONSE_CODE, response);
     }
 
@@ -145,6 +146,8 @@ public class GoPluginImpl implements GoPlugin {
             String buildScript = scriptConfig.get("value");
             Map<String, String> envsConfig = (Map<String, String>) configKeyValuePairs.get("envs");
             String envVars = envsConfig.get("value").replaceAll("\n", ";");
+            Map<String, String> hostMapConfig = (Map<String, String>) configKeyValuePairs.get("hostMap");
+            String hostMap = hostMapConfig.get("value").replaceAll("\n", ";");
 
             JobConsoleLogger.getConsoleLogger().printLine("[docker-executor] -------------------------");
             JobConsoleLogger.getConsoleLogger().printLine("[docker-executor] Build Image: " + buildImage);
@@ -152,7 +155,7 @@ public class GoPluginImpl implements GoPlugin {
             JobConsoleLogger.getConsoleLogger().printLine("[docker-executor] Extra EnvVars: " + envVars);
             JobConsoleLogger.getConsoleLogger().printLine("[docker-executor] -------------------------");
 
-            String dockerParam = getDockerParam(workingDirectory, buildImage, envVars, imageSource.equals("diy"));
+            String dockerParam = getDockerParam(workingDirectory, buildImage, envVars, hostMap, imageSource.equals("diy"));
             JobConsoleLogger.getConsoleLogger().printLine("[docker-executor] " + dockerParam + "'" + buildScript + "'");
             int exitCode = executeDockerCommand(workingDirectory, environmentVariables, dockerParam, buildScript);
 
@@ -170,7 +173,7 @@ public class GoPluginImpl implements GoPlugin {
         return renderJSON(SUCCESS_RESPONSE_CODE, response);
     }
 
-    protected String getDockerParam(String workingDirectory, String buildImage, String envVars, boolean isDIYImage) {
+    protected String getDockerParam(String workingDirectory, String buildImage, String envVars, String hostMap, boolean isDIYImage) {
         String dockerImageName, extraParameters;
         if (isDIYImage) {
             dockerImageName = buildImage;
@@ -183,6 +186,12 @@ public class GoPluginImpl implements GoPlugin {
         for (String var : varList) {
             if (var.indexOf("=") > 0) {
                 extraParameters += (" -e " + var.trim());
+            }
+        }
+        String[] hostList = hostMap.split(";");
+        for (String host : hostList) {
+            if (host.indexOf(":") > 0) {
+                extraParameters += (" --add-host " + host.trim());
             }
         }
         String dockerCmd = "docker run --rm -v " + WORKDIR_PREFIX + workingDirectory + ":/workspace -w /workspace " +

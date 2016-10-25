@@ -2,7 +2,7 @@
 <go-plugin id="docker-executor" version="1">
     <about>
         <name>Docker Task Executor</name>
-        <version>0.3.0</version>
+        <version>0.3.1</version>
         <target-go-version>16.1.0</target-go-version>
         <description>
             Thoughtworks Go plugin to execute build via docker
